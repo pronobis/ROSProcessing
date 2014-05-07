@@ -53,41 +53,41 @@ import com.google.gson.*;
 public class ROSProcessing {
 
   /** Stores information about the event callback. */
-  private class EventInfo  {
+  class EventInfo  {
     Object object;
     Method method;
 
-    public EventInfo(Object o, Method m) {
-      object=o;
-      method=m;
+    public EventInfo(Object object, Method method) {
+      this.object=object;
+      this.method=method;
     }
   };
 
-  
-  PApplet _parent;
-  WebSocketClient _webSocket;
-  String _hostname;
-  int _port;
-  boolean _isConnected;
+  // Private variables
+  private PApplet parent;
+  private WebSocketClient webSocket;
+  private String hostname;
+  private int port;
+  private boolean isConnected;
 
   /** List of all events and their associated topic names */
-  Map<String, EventInfo> _events;
+  private Map<String, EventInfo> events;
 
   /** Listener for TF */
-  TransformListener _transformListener;
+  private TransformListener transformListener;
 
   
   /** Initialization */
   public ROSProcessing(PApplet parent, String hostname, int port) {
-    _parent = parent;
-    _webSocket = null;
-    _hostname = hostname;
-    _port = port;
-    _isConnected = false;
-    _events = new HashMap<String, EventInfo>();
-    _transformListener = null;
+    this.parent = parent;
+    this.webSocket = null;
+    this.hostname = hostname;
+    this.port = port;
+    this.isConnected = false;
+    this.events = new HashMap<String, EventInfo>();
+    this.transformListener = null;
     
-    _parent.registerMethod("dispose", this);
+    this.parent.registerMethod("dispose", this);
   }
 
   /** Initialization */
@@ -109,14 +109,14 @@ public class ROSProcessing {
 
 
   /** Displays an error in the console. */
-  private void logError(String msg) {
-    _parent.println("[ROSProcessing] ERROR: " + msg);
+  void logError(String msg) {
+    this.parent.println("[ROSProcessing] ERROR: " + msg);
   }
 
   
   /** Displays an info in the console. */
-  private void logInfo(String msg) {
-    _parent.println("[ROSProcessing] " + msg);
+  void logInfo(String msg) {
+    this.parent.println("[ROSProcessing] " + msg);
   }
   
   
@@ -124,20 +124,20 @@ public class ROSProcessing {
   public boolean connect() {
 
     // Check if websocket exists already
-    if (_webSocket==null)
+    if (this.webSocket==null)
     {
       // Get URI
       URI uri;
       try {
-        uri = new URI( "ws://" + _hostname + ":" + Integer.toString(_port) );
+        uri = new URI( "ws://" + this.hostname + ":" + Integer.toString(this.port) );
       } 
       catch ( URISyntaxException ex ) {
-        logError("Incorrect hostname (" + _hostname + ") or port (" + _port + ").");
+        logError("Incorrect hostname (" + this.hostname + ") or port (" + this.port + ").");
         return false;
       }
 
       // Initialize the websocket
-      _webSocket = new WebSocketClient(uri) { 
+      this.webSocket = new WebSocketClient(uri) { 
           @Override
           public void onMessage( String message ) {
             processIncoming(message);
@@ -162,28 +162,28 @@ public class ROSProcessing {
 
     // Connect
     try{
-      _isConnected = _webSocket.connectBlocking();
+      this.isConnected = this.webSocket.connectBlocking();
     } catch(InterruptedException e) {}
 
-    return _isConnected;
+    return this.isConnected;
   }
 
 
   /** Disconnect from the server. */
   public void disconnect() {
-    if ((_webSocket!=null) && (_isConnected))
+    if ((this.webSocket!=null) && (this.isConnected))
     {
       try{
-        _webSocket.closeBlocking();
-        _isConnected = false;
+        this.webSocket.closeBlocking();
+        this.isConnected = false;
       } catch(InterruptedException e) {}
     }
   }
 
  
   /** Subscribe to a topic. */
-  public void subscribe(String topic, Object obj, String event) {
-    if (!_isConnected)
+  void subscribe(String topic, Object obj, String event) {
+    if (!this.isConnected)
       return;
 
     logInfo("Subscribing to "+topic);
@@ -201,10 +201,10 @@ public class ROSProcessing {
     }
 
     // Save the topic and method in a map
-    _events.put(topic, new EventInfo(obj, method));
+    this.events.put(topic, new EventInfo(obj, method));
 
     // RosBridge command
-    _webSocket.send("{\"op\": \"subscribe\"" +
+    this.webSocket.send("{\"op\": \"subscribe\"" +
                     ", "+
                     "\"topic\": \""+ topic +"\"" +
                     "}");
@@ -213,16 +213,24 @@ public class ROSProcessing {
 
   /** Subscribe to a topic. */
   public void subscribe(String topic, String event) {
-    subscribe(topic, _parent, event);
+    subscribe(topic, this.parent, event);
   }
 
 
   /** Starts a TF transform listener. */
   public void listenTransforms() {
-    _transformListener = new TransformListener(this);
+    this.transformListener = new TransformListener(this);
   }
   
 
+  /** Get the most recent transform between two frames. */
+  TransformStamped lookupTransform(String parent, String child) {
+    if (this.transformListener == null)
+      return null;
+    return this.transformListener.lookupTransform(parent,child);
+  }
+
+  
   /** Processes incoming data. */
   private void processIncoming(String data) {
     //logInfo(data);
@@ -279,7 +287,7 @@ public class ROSProcessing {
   /** Processes the received published incoming data */
   private void processPublish(String topic, JsonElement data) {
     // Get the event
-    EventInfo eventInfo = _events.get(topic);
+    EventInfo eventInfo = this.events.get(topic);
     if (eventInfo==null)
     {
       logError("No event defined for topic "+topic);
@@ -302,7 +310,8 @@ public class ROSProcessing {
     try {
       eventInfo.method.invoke(eventInfo.object, msg);
     } catch (Exception ex) {
-      logError("Cannot execute the event method: "+ex);
+      logError("Cannot execute the event method: "+ ex + "\n");
+      ex.printStackTrace();
     }    
   } 
   

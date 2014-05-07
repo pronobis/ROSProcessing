@@ -34,8 +34,24 @@
 
 package rosprocessing;
 
-public class Time
+public class Time implements Comparable<Time>
 {
   public int secs;
   public int nsecs;
+
+  public int compareTo(Time t) {
+    if (this.secs<t.secs)
+      return -1;
+    else if (this.secs>t.secs)
+      return 1;
+    else
+    {
+      if (this.nsecs<t.nsecs)
+        return -1;
+      else if (this.nsecs>t.nsecs)
+        return 1;
+      else
+        return 0;
+    }
+  }
 }
