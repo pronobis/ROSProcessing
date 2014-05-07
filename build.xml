@@ -1,0 +1,31 @@
+<project name="ROSProcessing" basedir="." default="main">
+
+  <!-- CONFIGURATION -->
+  <!-- Set the path to the main Processing folder here -->
+  <property name="processing.dir" value="/opt/processing-2.1.2"/>
+  <!-- /CONFIGURATION -->
+
+  
+  <!-- BUILD -->
+  <path id="classpath">
+    <fileset dir="${processing.dir}/core/library" includes="**/*.jar"/>
+    <fileset dir="library" includes="**/*.jar"/>
+  </path>
+  
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="build/classes"/>
+    <javac srcdir="src" destdir="build/classes" classpathref="classpath"/>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar destfile="library/${ant.project.name}.jar" basedir="build/classes"/>
+  </target>
+
+  <target name="main" depends="clean,jar"/>
+  <!-- /BUILD -->
+
+</project>
