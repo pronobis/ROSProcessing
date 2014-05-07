@@ -52,6 +52,18 @@ import com.google.gson.*;
  */
 public class ROSProcessing {
 
+  /** Stores information about the event callback. */
+  private class EventInfo  {
+    Object object;
+    Method method;
+
+    public EventInfo(Object o, Method m) {
+      object=o;
+      method=m;
+    }
+  };
+
+  
   PApplet _parent;
   WebSocketClient _webSocket;
   String _hostname;
@@ -59,7 +71,11 @@ public class ROSProcessing {
   boolean _isConnected;
 
   /** List of all events and their associated topic names */
-  Map<String, Method> _events;
+  Map<String, EventInfo> _events;
+
+  /** Listener for TF */
+  TransformListener _transformListener;
+
   
   /** Initialization */
   public ROSProcessing(PApplet parent, String hostname, int port) {
@@ -68,7 +84,8 @@ public class ROSProcessing {
     _hostname = hostname;
     _port = port;
     _isConnected = false;
-    _events = new HashMap<String, Method>();
+    _events = new HashMap<String, EventInfo>();
+    _transformListener = null;
     
     _parent.registerMethod("dispose", this);
   }
@@ -163,9 +180,9 @@ public class ROSProcessing {
     }
   }
 
-
+ 
   /** Subscribe to a topic. */
-  public void subscribe(String topic, String event) {
+  public void subscribe(String topic, Object obj, String event) {
     if (!_isConnected)
       return;
 
@@ -173,7 +190,7 @@ public class ROSProcessing {
 
     // Get the method associated with the event
     Method method=null;
-    Method[] methods = _parent.getClass().getDeclaredMethods();
+    Method[] methods = obj.getClass().getDeclaredMethods();
     for (int i=0; i<methods.length; ++i) {
       if (methods[i].getName().equals(event))
         method = methods[i];
@@ -184,13 +201,25 @@ public class ROSProcessing {
     }
 
     // Save the topic and method in a map
-    _events.put(topic, method);
+    _events.put(topic, new EventInfo(obj, method));
 
     // RosBridge command
     _webSocket.send("{\"op\": \"subscribe\"" +
                     ", "+
                     "\"topic\": \""+ topic +"\"" +
                     "}");
+  }
+  
+
+  /** Subscribe to a topic. */
+  public void subscribe(String topic, String event) {
+    subscribe(topic, _parent, event);
+  }
+
+
+  /** Starts a TF transform listener. */
+  public void listenTransforms() {
+    _transformListener = new TransformListener(this);
   }
   
 
@@ -246,26 +275,24 @@ public class ROSProcessing {
     }   
   }
 
+  
   /** Processes the received published incoming data */
   private void processPublish(String topic, JsonElement data) {
-//    logInfo("Received: "+data.toString());
-
-    // Get the method
-    Method method = _events.get(topic);
-    if (method==null)
+    // Get the event
+    EventInfo eventInfo = _events.get(topic);
+    if (eventInfo==null)
     {
       logError("No event defined for topic "+topic);
       return;
     }
-    Class<?>[] params = method.getParameterTypes();
+    Class<?>[] params = eventInfo.method.getParameterTypes();
     Class param = params[0];
 
-    // Special treatment for a type?
-    Object obj;
     // Parse the json
+    Object msg;
     Gson gson = new Gson();
     try {
-      obj = gson.fromJson(data, param);
+      msg = gson.fromJson(data, param);
     } catch(JsonSyntaxException ex) {     
       logError("Cannot match the class to JSON: " + ex.getMessage());
       return;
@@ -273,12 +300,10 @@ public class ROSProcessing {
     
     // Execute method
     try {
-      method.invoke(_parent, obj);
+      eventInfo.method.invoke(eventInfo.object, msg);
     } catch (Exception ex) {
       logError("Cannot execute the event method: "+ex);
     }    
-  }
-
-
+  } 
   
 };
