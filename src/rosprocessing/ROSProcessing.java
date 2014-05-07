@@ -36,11 +36,15 @@ package rosprocessing;
 
 import processing.core.*;
 
+import java.lang.reflect.*;
+import java.util.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+
+import com.google.gson.*;
 
 
 /**
@@ -53,7 +57,9 @@ public class ROSProcessing {
   String _hostname;
   int _port;
   boolean _isConnected;
-  
+
+  /** List of all events and their associated topic names */
+  Map<String, Method> _events;
   
   /** Initialization */
   public ROSProcessing(PApplet parent, String hostname, int port) {
@@ -62,6 +68,7 @@ public class ROSProcessing {
     _hostname = hostname;
     _port = port;
     _isConnected = false;
+    _events = new HashMap<String, Method>();
     
     _parent.registerMethod("dispose", this);
   }
@@ -116,7 +123,7 @@ public class ROSProcessing {
       _webSocket = new WebSocketClient(uri) { 
           @Override
           public void onMessage( String message ) {
-            logInfo( "Received: " + message );
+            processIncoming(message);
           }
         
           @Override
@@ -126,12 +133,12 @@ public class ROSProcessing {
         
           @Override
           public void onClose( int code, String reason, boolean remote ) {
-            logInfo( "Disconnected from " + getURI() + "; Code: " + code + " " + reason);          
+            logInfo( "Disconnected from " + getURI());          
           }
 
           @Override
-          public void onError( Exception ex ) {
-            logError( "WebSocket exception occurred!\n" + ex );
+          public void onError( Exception ex ) {            
+            logError( ex.toString() );
           }
         };
     }
@@ -158,34 +165,122 @@ public class ROSProcessing {
 
 
   /** Subscribe to a topic. */
-  public void subscribe() {
-    if (_isConnected)
-    {
-      _webSocket.send("{\"op\": \"subscribe\", \"topic\": \"/odom\", \"type\": \"nav_msgs/Odometry\"}");
+  public void subscribe(String topic, String event) {
+    if (!_isConnected)
+      return;
+
+    logInfo("Subscribing to "+topic);
+
+    // Get the method associated with the event
+    Method method=null;
+    Method[] methods = _parent.getClass().getDeclaredMethods();
+    for (int i=0; i<methods.length; ++i) {
+      if (methods[i].getName().equals(event))
+        method = methods[i];
     }
+    if (method==null) {
+      logError("No such event: "+event);
+      return;
+    }
+
+    // Save the topic and method in a map
+    _events.put(topic, method);
+
+    // RosBridge command
+    _webSocket.send("{\"op\": \"subscribe\"" +
+                    ", "+
+                    "\"topic\": \""+ topic +"\"" +
+                    "}");
   }
   
-}
+
+  /** Processes incoming data. */
+  private void processIncoming(String data) {
+    // Parse the string
+    JsonParser parser = new JsonParser();
+    JsonObject object = parser.parse(data).getAsJsonObject();
+
+    // Get Op
+    JsonElement opEl = object.get("op");
+    if (opEl==null) {
+      logError("Incorrect response:\n" + data);
+      return;
+    }
+    String op;
+    try {
+       op = opEl.getAsString();
+    } catch(Exception ex) {
+      logError("Incorrect response:\n" + data);
+      return;
+    } 
+    
+    // Handle various operations
+    if (op.equals("publish")) {
+      // Get topic
+      JsonElement topicEl = object.get("topic");
+      if (topicEl==null) {
+        logError("Incorrect response:\n" + data);
+          return;
+      }
+      String topic;
+      try {
+        topic = topicEl.getAsString();
+      } catch(Exception ex) {
+        logError("Incorrect response:\n" + data);
+        return;
+      } 
+      // Get msg
+      JsonElement msgEl = object.get("msg");
+      if (topicEl==null) {
+        logError("Incorrect response:\n" + data);
+          return;
+      }
+
+      // Processs
+      processPublish(topic, msgEl);
+    } else {
+      logError("Unknown operation: "+op);
+      return;
+    }   
+  }
+
+  /** Processes the received published incoming data */
+  private void processPublish(String topic, JsonElement data) {
+//    logInfo("Received: "+data.toString());
+
+    // Get the method
+    Method method = _events.get(topic);
+    if (method==null)
+    {
+      logError("No event defined for topic "+topic);
+      return;
+    }
+    Class<?>[] params = method.getParameterTypes();
+    Class param = params[0];
+
+    // Special treatment for a type?
+    Object obj = null;
+    if (PImage.class.equals(param))  {
+      logInfo("PARSING IMAGE");
+    } else { // Original ROS type
+      // Parse the json
+      Gson gson = new Gson();
+      try {
+        obj = gson.fromJson(data, param);
+      } catch(JsonSyntaxException ex) {     
+        logError("Cannot match the class to JSON: " + ex.getMessage());
+        return;
+      }
+    }
+    
+    // Execute method
+    try {
+      method.invoke(_parent, obj);
+    } catch (Exception ex) {
+      logError("Cannot execute the event method: "+ex);
+    }    
+  }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+};
