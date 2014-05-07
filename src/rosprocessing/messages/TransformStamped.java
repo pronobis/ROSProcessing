@@ -34,22 +34,9 @@
 
 package rosprocessing;
 
-/**
- * Listens to /tf and provides transforms.
- */
-public class TransformListener
+public class TransformStamped
 {
-  private ROSProcessing _parent;
-  
-  public TransformListener(ROSProcessing parent) {
-    _parent = parent;
-
-    // Subscribe to the topic
-    _parent.subscribe("/tf", this, "newTF");
-  }
-  
-  /** Receives a new TF message. */
-  private void newTF(TFMessage msg) {
-      
-  }
+  public Header header;
+  public String child_frame_id;
+  public Transform transform;
 }
