@@ -66,6 +66,16 @@ public class ROSProcessing {
     _parent.registerMethod("dispose", this);
   }
 
+  /** Initialization */
+  public ROSProcessing(PApplet parent, String hostname) {
+    this(parent, hostname, 9090);
+  }
+
+  /** Initialization */
+  public ROSProcessing(PApplet parent) {
+    this(parent, "localhost");
+  }
+
   
   /** Anything in here will be called automatically when the parent sketch shuts down.
       For instance, this might shut down a thread used by this library. */
@@ -76,13 +86,13 @@ public class ROSProcessing {
 
   /** Displays an error in the console. */
   private void logError(String msg) {
-    _parent.println("ROSProcessing ERROR: " + msg);
+    _parent.println("[ROSProcessing] ERROR: " + msg);
   }
 
   
   /** Displays an info in the console. */
   private void logInfo(String msg) {
-    _parent.println("ROSProcessing INFO: " + msg);
+    _parent.println("[ROSProcessing] " + msg);
   }
   
   
@@ -111,18 +121,17 @@ public class ROSProcessing {
         
           @Override
           public void onOpen( ServerHandshake handshake ) {
-            logInfo( "Connected to: " + getURI());
+            logInfo( "Connected to " + getURI());
           }
         
           @Override
           public void onClose( int code, String reason, boolean remote ) {
-            logInfo( "Disconnected from: " + getURI() + "; Code: " + code + " " + reason);          
+            logInfo( "Disconnected from " + getURI() + "; Code: " + code + " " + reason);          
           }
 
           @Override
           public void onError( Exception ex ) {
-            logError( "WebSocket Exception occurred!\n" + ex );
-            // ex.printStackTrace();
+            logError( "WebSocket exception occurred!\n" + ex );
           }
         };
     }
