@@ -76,13 +76,13 @@ public class ROSProcessing {
 
   /** Displays an error in the console. */
   private void logError(String msg) {
-    _parent.println("ROSProcessing ERROR: " + msg + "\n");
+    _parent.println("ROSProcessing ERROR: " + msg);
   }
 
   
   /** Displays an info in the console. */
   private void logInfo(String msg) {
-    _parent.println("ROSProcessing INFO: " + msg + "\n");
+    _parent.println("ROSProcessing INFO: " + msg);
   }
   
   
