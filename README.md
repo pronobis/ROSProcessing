@@ -30,10 +30,11 @@ Usage
       ...
     }
     ```
-   You can specify the hostname and port like this:
+    You can specify the hostname and port like this:
     ```
     rp = new ROSProcessing(this, "192.168.1.1", 8080);
     ```
+    If not specified, "localhost" and port 9090 are used.
 
 4. Subscribe to your topics using the `subscribe` method (e.g. also in your `setup()`).  
     ```
@@ -71,7 +72,7 @@ void setup() {
   
   rp = new ROSProcessing(this);
   rp.connect();
-  rp.subscribe("/rgbd_camera/rgb/image", "newImage");   
+  rp.subscribe("/image", "newImage");   
 }
 
 PImage pImage;
