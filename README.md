@@ -42,13 +42,14 @@ Usage
     ```
    The arguments are the topic name and the name of the event callback to be called when new data arrive.
 
-5. Create a callback function that will receive the data and save it in a global variable.
+5. Create a callback function that will receive the data and save it in a global variable. 
     ```
     PImage pImage;
     void newImage(Image image) {
       pImage=image.getPImage(this);
     }
     ```
+    The event function must take an argument of a class corresponding to the message type of the ROS topic. Currently implemented message classes are storred in the `src/rosprocessing/messages` folder. Sometimes, those message classes provide convenience functions for parsing the raw ROS data, as in the example above where we convert ROS data to a `PImage`.
 
 6. Draw!
     ```
