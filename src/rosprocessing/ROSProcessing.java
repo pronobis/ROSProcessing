@@ -259,18 +259,14 @@ public class ROSProcessing {
     Class param = params[0];
 
     // Special treatment for a type?
-    Object obj = null;
-    if (PImage.class.equals(param))  {
-      logInfo("PARSING IMAGE");
-    } else { // Original ROS type
-      // Parse the json
-      Gson gson = new Gson();
-      try {
-        obj = gson.fromJson(data, param);
-      } catch(JsonSyntaxException ex) {     
-        logError("Cannot match the class to JSON: " + ex.getMessage());
-        return;
-      }
+    Object obj;
+    // Parse the json
+    Gson gson = new Gson();
+    try {
+      obj = gson.fromJson(data, param);
+    } catch(JsonSyntaxException ex) {     
+      logError("Cannot match the class to JSON: " + ex.getMessage());
+      return;
     }
     
     // Execute method

@@ -1,4 +1,6 @@
-class Vector3
+package rosprocessing;
+
+public class Vector3
 {
   public double x;
   public double y;

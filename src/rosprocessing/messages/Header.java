@@ -1,4 +1,6 @@
-class Header
+package rosprocessing;
+
+public class Header
 {
   public int seq;
   public Time stamp;

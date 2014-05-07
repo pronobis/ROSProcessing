@@ -1,4 +1,6 @@
-class Odometry
+package rosprocessing;
+
+public class Odometry
 {
   public Header header;
   public String child_frame_id;

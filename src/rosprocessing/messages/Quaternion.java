@@ -1,4 +1,6 @@
-class Quaternion
+package rosprocessing;
+
+public class Quaternion
 {
   public double x;
   public double y;
