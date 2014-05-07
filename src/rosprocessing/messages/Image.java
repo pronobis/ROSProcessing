@@ -13,14 +13,20 @@ public class Image
   public byte is_bigendian;
   public int step;
   public String data;
-
+  private transient byte [] byteData;
+  
+  public byte [] getByteData() {
+    if (byteData==null)
+      byteData = DatatypeConverter.parseBase64Binary(data);
+    return byteData; 
+  }
 
   public PImage getPImage(PApplet parent) {
     // Decode the buffer
+    getByteData();
 
     // Create a new PImage
     PImage pImage = parent.createImage(width, height, PImage.RGB);
-    byte [] byteData = DatatypeConverter.parseBase64Binary(data);
 
     int pixNum=width*height;
     for (int i=0; i<pixNum; ++i) {

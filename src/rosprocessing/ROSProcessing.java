@@ -196,6 +196,8 @@ public class ROSProcessing {
 
   /** Processes incoming data. */
   private void processIncoming(String data) {
+    //logInfo(data);
+    
     // Parse the string
     JsonParser parser = new JsonParser();
     JsonObject object = parser.parse(data).getAsJsonObject();
