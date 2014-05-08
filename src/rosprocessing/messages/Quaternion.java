@@ -35,9 +35,24 @@
 package rosprocessing;
 
 public class Quaternion
-{
+{ 
   public double x;
   public double y;
   public double z; 
   public double w;
+
+  public void print(String name) {
+    System.out.println(name+": ["+
+                       Double.toString(x)+", "+
+                       Double.toString(y)+", "+
+                       Double.toString(z)+", "+
+                       Double.toString(w)+"]");   
+  }
+
+  public float getYaw() {
+    Rot r = new Rot((float)w, (float)x, (float)y, (float)z, true);
+    return r.getAngles(RotOrder.XYZ)[2];
+  }
+  
 }
+

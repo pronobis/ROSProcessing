@@ -223,11 +223,16 @@ public class ROSProcessing {
   }
   
 
-  /** Get the most recent transform between two frames. */
-  TransformStamped lookupTransform(String parent, String child) {
+  // /** Get the most recent transform between two frames. */
+  public TransformStamped lookupTransform(String parent, String child) {
     if (this.transformListener == null)
       return null;
     return this.transformListener.lookupTransform(parent,child);
+  }
+
+  /** Prints a list of transforms received so far. */ 
+  public void printTransforms() {
+    this.transformListener.printTransforms();
   }
 
   

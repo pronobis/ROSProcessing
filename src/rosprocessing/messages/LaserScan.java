@@ -51,4 +51,29 @@ public class LaserScan
 
   public float[] ranges;
   public float[] intensities;  
+
+  public void print(String name) {
+    header.print(name+":header");
+    System.out.println(name+":angle_min: " + Float.toString(angle_min));
+    System.out.println(name+":angle_max: " + Float.toString(angle_max));
+    System.out.println(name+":angle_increment: " + Float.toString(angle_increment));
+    System.out.println(name+":time_increment: " + Float.toString(time_increment));
+    System.out.println(name+":scan_time: " + Float.toString(scan_time));
+    System.out.println(name+":range_min: " + Float.toString(range_min));
+    System.out.println(name+":range_max: " + Float.toString(range_max));
+    if (ranges!=null && ranges.length>0)
+    {
+      String rangesStr="["+Float.toString(ranges[0]);
+      for (int i=1; i<ranges.length; ++i)
+        rangesStr+=","+Float.toString(ranges[i]);
+      System.out.println(name+":ranges: " + rangesStr);
+    }
+    if (intensities!=null && intensities.length>0)
+    {
+      String intensitiesStr="["+Float.toString(intensities[0]);
+      for (int i=1; i<intensities.length; ++i)
+        intensitiesStr+=","+Float.toString(intensities[i]);
+      System.out.println(name+":intensities: " + intensitiesStr);
+    }
+  }
 }

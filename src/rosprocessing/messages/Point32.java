@@ -39,4 +39,11 @@ public class Point32
   public float x;
   public float y;
   public float z;
+
+  public void print(String name) {
+    System.out.println(name+": ["+
+                       Float.toString(x)+", "+
+                       Float.toString(y)+", "+
+                       Float.toString(z)+"]");   
+  }
 }

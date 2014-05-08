@@ -39,6 +39,16 @@ public class Time implements Comparable<Time>
   public int secs;
   public int nsecs;
 
+  public Time() {
+    this.secs=0;
+    this.nsecs=0;
+  }
+
+  public Time(int secs, int nsecs) {
+    this.secs=secs;
+    this.nsecs=nsecs;
+  }
+  
   public int compareTo(Time t) {
     if (this.secs<t.secs)
       return -1;
@@ -54,4 +64,27 @@ public class Time implements Comparable<Time>
         return 0;
     }
   }
+
+  public Time diff(Time t) {
+    Time out = new Time(this.secs, this.nsecs);
+    out.secs-=t.secs;
+    out.nsecs-=t.nsecs;
+    if (out.nsecs<0)
+    {
+      out.secs-=1;
+      out.nsecs+=1e9;
+    }
+    return out;
+  }
+  
+  public void print(String name) {
+    System.out.println(name+": " +
+                       Integer.toString(secs) + "." +
+                       Integer.toString(nsecs));
+  }
+
+  public double toDouble() {
+    return this.secs + (double)this.nsecs/1.0e9;
+  }
+  
 }

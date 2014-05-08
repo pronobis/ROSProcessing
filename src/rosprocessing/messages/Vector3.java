@@ -39,4 +39,11 @@ public class Vector3
   public double x;
   public double y;
   public double z;
+
+  public void print(String name) {
+    System.out.println(name+": ["+
+                       Double.toString(x)+", "+
+                       Double.toString(y)+", "+
+                       Double.toString(z)+"]");   
+  }
 }

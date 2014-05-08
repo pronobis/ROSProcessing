@@ -38,4 +38,9 @@ public class Transform
 {
   public Vector3 translation;
   public Quaternion rotation;
+
+  public void print(String name) {
+    translation.print(name+":translation");
+    rotation.print(name+":rotation");
+  }
 }

@@ -39,4 +39,11 @@ public class TransformStamped
   public Header header;
   public String child_frame_id;
   public Transform transform;
+
+  public void print(String name) {
+    header.print(name+":header");
+    System.out.println(name+":child_frame_id: "+child_frame_id);
+    transform.print(name+":transform");
+  }
+
 }

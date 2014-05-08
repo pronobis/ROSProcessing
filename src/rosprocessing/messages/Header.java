@@ -39,4 +39,11 @@ public class Header
   public int seq;
   public Time stamp;
   public String frame_id;
+
+  public void print(String name) {
+    System.out.println(name+":seq: "+Integer.toString(seq));
+    stamp.print(name+":stamp");
+    System.out.println(name+":frame_id: "+frame_id);   
+  }
+
 }

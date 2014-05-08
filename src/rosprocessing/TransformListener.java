@@ -41,9 +41,17 @@ import java.util.*;
  * Listens to /tf and provides transforms.
  */
 public class TransformListener
-{ 
-  private ROSProcessing parent;
+{
+  /** Number of seconds for which we keep the old
+      stuff in the buffer compared to the timestamp of the new
+      incoming TF message. */
+  private static int BUFFER_SIZE_SECONDS = 3;
 
+  /** Minimum time difference to consider the TF time match. */
+  private static double TF_MATCH_THRESHOLD = 0.1;
+
+  
+  private ROSProcessing parent;
   
   /**
    * Represents information about a transform.
@@ -74,12 +82,12 @@ public class TransformListener
 
  
   /** Stores the most recent transform between two frames. */
-  Map<TransformInfo, TransformStamped> tf;
+  Map<TransformInfo, LinkedList<TransformStamped>> tf;
 
   
   public TransformListener(ROSProcessing parent) {
     this.parent = parent;
-    this.tf = new HashMap<TransformInfo, TransformStamped>();
+    this.tf = new HashMap<TransformInfo, LinkedList<TransformStamped>>();
     
     // Subscribe to the topic
     this.parent.subscribe("/tf", this, "newTF");
@@ -88,40 +96,114 @@ public class TransformListener
   
   /** Receives a new TF message. */
   void newTF(TFMessage msg) {
-    // Process all incoming transforms
-    for (int i=0; i<msg.transforms.length; ++i) {
-      TransformStamped newTS = msg.transforms[i];
-      // Update the frame names to be absolute
-      if (!newTS.header.frame_id.substring(0,1).equals("/"))
-        newTS.header.frame_id="/"+newTS.header.frame_id;
-      if (!newTS.child_frame_id.substring(0,1).equals("/"))
-        newTS.child_frame_id="/"+newTS.child_frame_id;
+    // Mutex
+    synchronized(this.tf) {
+
+      // Process all incoming transforms
+      for (int i=0; i<msg.transforms.length; ++i) {
+        TransformStamped ts = msg.transforms[i];
+        // Update the frame names to be absolute
+        if (!ts.header.frame_id.substring(0,1).equals("/"))
+          ts.header.frame_id="/"+ts.header.frame_id;
+        if (!ts.child_frame_id.substring(0,1).equals("/"))
+          ts.child_frame_id="/"+ts.child_frame_id;
       
-      // Get the saved transform
-      TransformInfo tInfo =
-        new TransformInfo(newTS.header.frame_id, newTS.child_frame_id);
-      TransformStamped oldTS = this.tf.get(tInfo);
-      // Is the new one newer?
-      if ((oldTS==null) ||
-          (newTS.header.stamp.compareTo(oldTS.header.stamp)>0))
-      {
-        // Put it to the map
-        this.tf.put(tInfo, newTS);
-//        this.parent.logInfo("Adding transform between " +
-//                            tInfo.parent + " and " + tInfo.child  );
+        // Get the saved transforms list
+        TransformInfo tInfo =
+          new TransformInfo(ts.header.frame_id, ts.child_frame_id);
+        LinkedList<TransformStamped> tsList = this.tf.get(tInfo);
+        if (tsList==null)
+        {
+          tsList = new LinkedList<TransformStamped>();
+          this.tf.put(tInfo, tsList);
+        }
+
+        // Add the transform to the top of the list
+        tsList.addFirst(ts);
+
+        // Should we remove stuff from the list?
+        Time t = new Time();
+        t.secs = ts.header.stamp.secs-this.BUFFER_SIZE_SECONDS;
+        t.nsecs = 0;
+        while (tsList.peekLast().header.stamp.compareTo(t)<0)
+          tsList.removeLast();
+
+        // this.parent.logInfo("Queue size: " + tsList.size());
       }
+
     }
   }
 
 
   /** Get the most recent transform between two frames. */
   TransformStamped lookupTransform(String parent, String child) {
-    TransformInfo tInfo =
-      new TransformInfo(parent, child);
-    
-    return this.tf.get(tInfo);
+    // Mutex
+    synchronized(this.tf) {
+
+      TransformInfo tInfo =
+        new TransformInfo(parent, child);
+      LinkedList<TransformStamped> tsList = this.tf.get(tInfo);
+
+      if (tsList==null)
+        return null;
+
+      // Find the most recent transform in the list
+      TransformStamped mr = null;
+      for(TransformStamped ts : tsList) {
+        if ((mr==null) || (ts.header.stamp.compareTo(mr.header.stamp)>0))
+          mr = ts;
+      }
+      return mr;
+
+    }
   }
 
 
+  /** Get the transform between two frames corresponding to the given time. */
+  TransformStamped lookupTransform(String parent, String child, Time time) {
+    // Mutex
+    synchronized(this.tf) {
+
+      TransformInfo tInfo =
+        new TransformInfo(parent, child);
+      LinkedList<TransformStamped> tsList = this.tf.get(tInfo);
+
+      if (tsList==null)
+        return null;
+
+      // Find the closest transform to the given time
+      TransformStamped closest = null;
+      double diff = 1.0e9;
+      for(TransformStamped ts : tsList) {
+        // Calculate time difference
+        double d = Math.abs(ts.header.stamp.diff(time).toDouble());
+        if (d<diff)
+        {
+          diff = d;
+          closest = ts;
+        }
+      }
+
+      // Return
+      if ((closest==null) || (diff>this.TF_MATCH_THRESHOLD))
+        return null;
+      else
+        return closest;
+
+    }
+  }
+
+
+  /** Prints a list of transforms stored in the map. */
+  void printTransforms() {
+    // Mutex
+    synchronized(this.tf) {
+
+      for(TransformInfo ti : this.tf.keySet()) {
+        System.out.println(ti.parent+" -> "+ti.child);
+      }
+
+    }
+  }
 
 }

@@ -38,4 +38,10 @@ public class Pose
 {
   public Point position;
   public Quaternion orientation;
+
+  public void print(String name) {
+    position.print(name+":position");
+    orientation.print(name+":orientation");
+  }
+
 }
