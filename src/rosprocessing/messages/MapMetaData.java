@@ -41,4 +41,17 @@ public class MapMetaData
   public int width;
   public int height;
   public Pose origin;
+
+
+  public void print(String name) {
+  }
+
+  public float getWidthMeters() {
+    return resolution * width;
+  }
+
+  public float getHeightMeters() {
+    return resolution * height;
+  }
+ 
 };
