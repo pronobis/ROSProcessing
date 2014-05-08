@@ -45,7 +45,7 @@ public class TransformListener
   /** Number of seconds for which we keep the old
       stuff in the buffer compared to the timestamp of the new
       incoming TF message. */
-  private static int BUFFER_SIZE_SECONDS = 3;
+  private static double BUFFER_SIZE_SECONDS = 2.0;
 
   /** Minimum time difference to consider the TF time match. */
   private static double TF_MATCH_THRESHOLD = 0.1;
@@ -98,7 +98,7 @@ public class TransformListener
   void newTF(TFMessage msg) {
     // Mutex
     synchronized(this.tf) {
-
+     
       // Process all incoming transforms
       for (int i=0; i<msg.transforms.length; ++i) {
         TransformStamped ts = msg.transforms[i];
@@ -122,10 +122,7 @@ public class TransformListener
         tsList.addFirst(ts);
 
         // Should we remove stuff from the list?
-        Time t = new Time();
-        t.secs = ts.header.stamp.secs-this.BUFFER_SIZE_SECONDS;
-        t.nsecs = 0;
-        while (tsList.peekLast().header.stamp.compareTo(t)<0)
+        while (ts.header.stamp.diff(tsList.peekLast().header.stamp).toDouble()>this.BUFFER_SIZE_SECONDS)
           tsList.removeLast();
 
         // this.parent.logInfo("Queue size: " + tsList.size());
@@ -153,6 +150,7 @@ public class TransformListener
         if ((mr==null) || (ts.header.stamp.compareTo(mr.header.stamp)>0))
           mr = ts;
       }
+
       return mr;
 
     }

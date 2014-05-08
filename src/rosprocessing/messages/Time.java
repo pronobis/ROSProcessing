@@ -50,16 +50,16 @@ public class Time implements Comparable<Time>
   }
   
   public int compareTo(Time t) {
-    if (this.secs<t.secs)
-      return -1;
-    else if (this.secs>t.secs)
+    if (this.secs>t.secs)
       return 1;
+    else if (this.secs<t.secs)
+      return -1;
     else
     {
-      if (this.nsecs<t.nsecs)
-        return -1;
-      else if (this.nsecs>t.nsecs)
+      if (this.nsecs>t.nsecs)
         return 1;
+      else if (this.nsecs<t.nsecs)
+        return -1;
       else
         return 0;
     }
