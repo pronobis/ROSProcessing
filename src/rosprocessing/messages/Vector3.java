@@ -42,20 +42,64 @@ public class Vector3
   private double y;
   private double z;
 
-  public float getX() {
+  public Vector3() {
+    this.x=0.0;
+    this.y=0.0;
+    this.z=0.0;
+  }
+
+  public Vector3(double x, double y, double z) {
+    this.x=x;
+    this.y=y;
+    this.z=z;
+  }
+
+  public Vector3(Vector3 v) {
+    this.x=v.x;
+    this.y=v.y;
+    this.z=v.z;
+  } 
+
+  public double getX() {
+    return x;
+  }
+
+  public double getY() {
+    return y;
+  }
+
+  public double getZ() {
+    return z;
+  }
+  
+  public float getX32() {
     return (float)x;
   }
 
-  public float getY() {
+  public float getY32() {
     return (float)y;
   }
 
-  public float getZ() {
+  public float getZ32() {
     return (float)z;
   }
 
   public PVector toPVector() {
     return new PVector((float)x,(float)y,(float)z);    
+  }
+
+  public void add(final Vector3 v) {
+    x+=v.x;
+    y+=v.y;
+    z+=v.z;
+  }
+
+  public static Vector3 add(final Vector3 v1, final Vector3 v2) {
+    Vector3 out = new Vector3(v1);
+    out.x+=v2.x;
+    out.y+=v2.y;
+    out.z+=v2.z;
+    return out;
   }
   
   public void print(String name) {

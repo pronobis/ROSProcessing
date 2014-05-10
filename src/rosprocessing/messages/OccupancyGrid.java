@@ -48,6 +48,10 @@ public class OccupancyGrid
     return header;
   }
 
+  public Time getTime() {
+    return header.getStamp();
+  }
+  
   public MapMetaData getInfo() {
     return info;
   }
@@ -68,7 +72,7 @@ public class OccupancyGrid
     return info.getHeightMeters();
   }
   
-  public PImage toPImage(PApplet parent) {
+  public PImage toPImage(final PApplet parent) {
 
     // Create a new PImage
     PImage pImage = parent.createImage(info.getWidth(), info.getHeight(), PImage.RGB);

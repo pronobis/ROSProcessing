@@ -40,28 +40,46 @@ public class Point
   private double y;
   private double z;
 
-  public float getX() {
-    return (float) x;
+  public double getX() {
+    return x;
   }
 
-  public float getY() {
-    return (float) y;
+  public double getY() {
+    return y;
   }
 
-  public float getZ() {
-    return (float) z;
+  public double getZ() {
+    return z;
+  }
+
+  public float getX32() {
+    return (float)x;
+  }
+
+  public float getY32() {
+    return (float)y;
+  }
+
+  public float getZ32() {
+    return (float)z;
   }
   
-  public Point(double x, double y, double z) {
-    this.x=x;
-    this.y=y;
-    this.z=z;
-  }
-
   public Point() {
     this.x=0;
     this.y=0;
     this.z=0;
+  }
+
+  public Point(final Point p) {
+    this.x=p.x;
+    this.y=p.y;
+    this.z=p.z;
+  }
+
+  public Point(double x, double y, double z) {
+    this.x=x;
+    this.y=y;
+    this.z=z;
   }
   
   public void print(String name) {

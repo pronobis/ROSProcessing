@@ -52,6 +52,14 @@ public class LaserScan
   private float[] ranges;
   private float[] intensities;  
 
+  public Header getHeader() {
+    return header;
+  }
+
+  public Time getTime() {
+    return header.getStamp();
+  }
+  
   public float getAngleMin() {
     return angle_min;
   }

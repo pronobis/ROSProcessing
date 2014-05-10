@@ -41,25 +41,45 @@ public class Transform
   private Vector3 translation;
   private Quaternion rotation;
 
+  public Transform() {
+    translation = new Vector3();
+    rotation = new Quaternion();
+  }
+
+  public Transform(final Transform t) {
+    translation = new Vector3(t.getTranslation());
+    rotation = new Quaternion(t.getRotation());
+  }
+
+  public Transform(final Vector3 trans, final Quaternion rot) {
+    translation = new Vector3(trans);
+    rotation = new Quaternion(rot);
+  }
+  
   public Vector3 getTranslation() {
     return translation;
   }
 
   public Quaternion getRotation() {
     return rotation;
-  }
+  } 
   
-  // public Transform applyTo(PVector v) {
-
-  // }
-
-  
-  // public Transform combine(Transform t) {
-    
-  // }
-  
-  public void print(String name) {
+  public void print(final String name) {
     translation.print(name+":translation");
     rotation.print(name+":rotation");
   }
+
+  public static Transform combine(final Transform t1, final Transform t2) {
+    if (t1==null || t2==null)
+      return null;
+    
+    Vector3 trans = new Vector3(t1.getTranslation());
+    Quaternion rot = new Quaternion(t1.getRotation());
+
+    trans.add(rot.apply(t2.getTranslation()));
+    rot.combine(t2.getRotation());
+
+    return new Transform(trans, rot);
+  }
+
 }

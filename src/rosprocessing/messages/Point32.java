@@ -40,6 +40,42 @@ public class Point32
   private float y;
   private float z;
 
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
+  public float getZ() {
+    return z;
+  }
+  
+  public Point32() {
+    this.x=0;
+    this.y=0;
+    this.z=0;
+  }
+
+  public Point32(final Point32 p) {
+    this.x=p.x;
+    this.y=p.y;
+    this.z=p.z;
+  }
+
+  public Point32(final Point p) {
+    this.x=(float)p.getX();
+    this.y=(float)p.getY();
+    this.z=(float)p.getZ();
+  }
+
+  public Point32(float x, float y, float z) {
+    this.x=x;
+    this.y=y;
+    this.z=z;
+  }
+
   public void print(String name) {
     System.out.println(name+": ["+
                        Float.toString(x)+", "+

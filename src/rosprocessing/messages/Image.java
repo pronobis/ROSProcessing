@@ -53,6 +53,10 @@ public class Image
     return header;
   }
 
+  public Time getTime() {
+    return header.getStamp();
+  }
+  
   public int getWidth() {
     return width;
   }

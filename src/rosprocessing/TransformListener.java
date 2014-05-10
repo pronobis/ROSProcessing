@@ -45,7 +45,7 @@ public class TransformListener
   /** Number of seconds for which we keep the old
       stuff in the buffer compared to the timestamp of the new
       incoming TF message. */
-  private static double BUFFER_SIZE_SECONDS = 2.0;
+  private static double BUFFER_SIZE_SECONDS = 5.0;
 
   /** Minimum time difference to consider the TF time match. */
   private static double TF_MATCH_THRESHOLD = 0.1;
@@ -118,7 +118,8 @@ public class TransformListener
         tsList.addFirst(ts);
 
         // Should we remove stuff from the list?
-        while (ts.getStamp().diff(tsList.peekLast().getStamp()).toDouble()>this.BUFFER_SIZE_SECONDS)
+        while ( Time.diff(ts.getStamp(), tsList.peekLast().getStamp()).toDouble() >
+               this.BUFFER_SIZE_SECONDS )
           tsList.removeLast();
 
         // this.parent.logInfo("Queue size: " + tsList.size());
@@ -170,7 +171,7 @@ public class TransformListener
       double diff = 1.0e9;
       for(TransformStamped ts : tsList) {
         // Calculate time difference
-        double d = Math.abs(ts.getStamp().diff(time).toDouble());
+        double d = Math.abs( Time.diff(ts.getStamp(), time).toDouble() );
         if (d<diff)
         {
           diff = d;

@@ -42,7 +42,7 @@ public class Pose
   public Point getPosition() {
     return position;
   }
-
+  
   public Quaternion getOrientation() {
     return orientation;
   }
@@ -51,5 +51,4 @@ public class Pose
     position.print(name+":position");
     orientation.print(name+":orientation");
   }
-
 }

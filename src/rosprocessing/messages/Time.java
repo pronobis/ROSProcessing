@@ -73,10 +73,10 @@ public class Time implements Comparable<Time>
     }
   }
 
-  public Time diff(Time t) {
-    Time out = new Time(this.secs, this.nsecs);
-    out.secs-=t.secs;
-    out.nsecs-=t.nsecs;
+  public static Time diff(Time t1, Time t2) {
+    Time out = new Time(t1.secs, t1.nsecs);
+    out.secs-=t2.secs;
+    out.nsecs-=t2.nsecs;
     if (out.nsecs<0)
     {
       out.secs-=1;
