@@ -46,7 +46,7 @@ Usage
     ```
     PImage pImage;
     void newImage(Image image) {
-      pImage=image.getPImage(this);
+      pImage=image.toPImage(this);
     }
     ```
     The event function must take an argument of a class corresponding to the message type of the ROS topic. Currently implemented message classes are storred in the `src/rosprocessing/messages` folder. Sometimes, those message classes provide convenience functions for parsing the raw ROS data, as in the example above where we convert ROS data to a `PImage`.
@@ -63,28 +63,4 @@ Usage
 Example
 -------
 
-```
-import rosprocessing.*;
-
-ROSProcessing rp; 
-
-void setup() {
-  size(640,480,P2D);
-  
-  rp = new ROSProcessing(this);
-  rp.connect();
-  rp.subscribe("/image", "newImage");   
-}
-
-PImage pImage;
-void newImage(Image image) {
-  pImage=image.getPImage(this);
-}
-
-void draw() {
-  if (pImage!=null)
-    image(pImage,0,0);
-}
-
-
-```
+You can find an example in the `examples` folder.
