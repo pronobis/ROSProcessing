@@ -8,7 +8,7 @@ Installation
 
 Just clone the repo to the `libraries` folder inside your Processing sketchbook and restart Processing.
 
-Usage
+Basic Usage
 -----
 
 1. Import the library
@@ -58,6 +58,8 @@ Usage
         image(pImage,0,0);
     }
     ```
+
+For additional features, see the example for now.
 
 
 Example
