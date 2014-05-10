@@ -36,14 +36,28 @@ package rosprocessing;
 
 public class Header
 {
-  public int seq;
-  public Time stamp;
-  public String frame_id;
+  private int seq;
+  private Time stamp;
+  private String frame_id;
 
+  public int getSeq() {
+    return seq;
+  }
+
+  public Time getStamp() {
+    return stamp;
+  }
+
+  public String getFrameId() {
+    if (frame_id.substring(0,1).equals("/"))
+      return frame_id.substring(1);
+    else 
+      return frame_id;
+  }
+  
   public void print(String name) {
     System.out.println(name+":seq: "+Integer.toString(seq));
     stamp.print(name+":stamp");
     System.out.println(name+":frame_id: "+frame_id);   
   }
-
 }

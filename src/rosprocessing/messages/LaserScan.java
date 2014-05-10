@@ -37,21 +37,45 @@ package rosprocessing;
 
 public class LaserScan
 {
-  public Header header;
+  private Header header;
 
-  public float angle_min;
-  public float angle_max;
-  public float angle_increment;
+  private float angle_min;
+  private float angle_max;
+  private float angle_increment;
 
-  public float time_increment;
-  public float scan_time;
+  private float time_increment;
+  private float scan_time;
 
-  public float range_min;
-  public float range_max;
+  private float range_min;
+  private float range_max;
 
-  public float[] ranges;
-  public float[] intensities;  
+  private float[] ranges;
+  private float[] intensities;  
 
+  public float getAngleMin() {
+    return angle_min;
+  }
+
+  public float getAngleMax() {
+    return angle_max; 
+  }
+  
+  public float getAngleIncrement() {
+    return angle_increment;
+  }
+  
+  public float getRangeMin() {
+    return range_min;
+  }
+  
+  public float getRangeMax() {
+    return range_max;
+  }
+  
+  public float [] getRanges() {
+    return ranges;
+  }
+  
   public void print(String name) {
     header.print(name+":header");
     System.out.println(name+":angle_min: " + Float.toString(angle_min));

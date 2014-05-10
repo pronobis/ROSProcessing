@@ -34,12 +34,30 @@
 
 package rosprocessing;
 
+import processing.core.*;
+
 public class Vector3
 {
-  public double x;
-  public double y;
-  public double z;
+  private double x;
+  private double y;
+  private double z;
 
+  public float getX() {
+    return (float)x;
+  }
+
+  public float getY() {
+    return (float)y;
+  }
+
+  public float getZ() {
+    return (float)z;
+  }
+
+  public PVector toPVector() {
+    return new PVector((float)x,(float)y,(float)z);    
+  }
+  
   public void print(String name) {
     System.out.println(name+": ["+
                        Double.toString(x)+", "+

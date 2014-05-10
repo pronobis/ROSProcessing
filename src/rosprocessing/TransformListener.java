@@ -85,12 +85,13 @@ public class TransformListener
   Map<TransformInfo, LinkedList<TransformStamped>> tf;
 
   
-  public TransformListener(ROSProcessing parent) {
+  public TransformListener(ROSProcessing parent,
+                           String tfTopic) {
     this.parent = parent;
     this.tf = new HashMap<TransformInfo, LinkedList<TransformStamped>>();
     
     // Subscribe to the topic
-    this.parent.subscribe("/tf", this, "newTF");
+    this.parent.subscribe(tfTopic, this, "newTF");
   }
   
   
@@ -100,17 +101,12 @@ public class TransformListener
     synchronized(this.tf) {
      
       // Process all incoming transforms
-      for (int i=0; i<msg.transforms.length; ++i) {
-        TransformStamped ts = msg.transforms[i];
-        // Update the frame names to be absolute
-        if (!ts.header.frame_id.substring(0,1).equals("/"))
-          ts.header.frame_id="/"+ts.header.frame_id;
-        if (!ts.child_frame_id.substring(0,1).equals("/"))
-          ts.child_frame_id="/"+ts.child_frame_id;
+      for (int i=0; i<msg.getTransforms().length; ++i) {
+        TransformStamped ts = msg.getTransform(i);
       
         // Get the saved transforms list
-        TransformInfo tInfo =
-          new TransformInfo(ts.header.frame_id, ts.child_frame_id);
+        TransformInfo tInfo = new TransformInfo(ts.getParentFrameId(),
+                                                ts.getChildFrameId());
         LinkedList<TransformStamped> tsList = this.tf.get(tInfo);
         if (tsList==null)
         {
@@ -122,7 +118,7 @@ public class TransformListener
         tsList.addFirst(ts);
 
         // Should we remove stuff from the list?
-        while (ts.header.stamp.diff(tsList.peekLast().header.stamp).toDouble()>this.BUFFER_SIZE_SECONDS)
+        while (ts.getStamp().diff(tsList.peekLast().getStamp()).toDouble()>this.BUFFER_SIZE_SECONDS)
           tsList.removeLast();
 
         // this.parent.logInfo("Queue size: " + tsList.size());
@@ -147,7 +143,7 @@ public class TransformListener
       // Find the most recent transform in the list
       TransformStamped mr = null;
       for(TransformStamped ts : tsList) {
-        if ((mr==null) || (ts.header.stamp.compareTo(mr.header.stamp)>0))
+        if ((mr==null) || (ts.getStamp().compareTo(mr.getStamp())>0))
           mr = ts;
       }
 
@@ -174,7 +170,7 @@ public class TransformListener
       double diff = 1.0e9;
       for(TransformStamped ts : tsList) {
         // Calculate time difference
-        double d = Math.abs(ts.header.stamp.diff(time).toDouble());
+        double d = Math.abs(ts.getStamp().diff(time).toDouble());
         if (d<diff)
         {
           diff = d;

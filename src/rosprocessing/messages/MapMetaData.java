@@ -36,14 +36,34 @@ package rosprocessing;
 
 public class MapMetaData
 {
-  public Time map_load_time;
-  public float resolution;
-  public int width;
-  public int height;
-  public Pose origin;
+  private Time map_load_time;
+  private float resolution;
+  private int width;
+  private int height;
+  private Pose origin;
 
+  public float getResolution() {
+    return resolution;
+  }
 
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public Pose getOrigin() {
+    return origin;
+  }
+  
   public void print(String name) {
+    map_load_time.print(name+":map_load_time");
+    System.out.println(name+":resolution: "+Float.toString(resolution));
+    System.out.println(name+":width: "+Integer.toString(width));
+    System.out.println(name+":height: "+Integer.toString(height));
+    origin.print(name+":origin");
   }
 
   public float getWidthMeters() {

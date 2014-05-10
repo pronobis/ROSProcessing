@@ -37,17 +37,17 @@ package rosprocessing;
 
 public class PointCloud2
 {
-  public Header header;
+  private Header header;
 
-  public int height;
-  public int width;
+  private int height;
+  private int width;
 
-  public PointField[] fields;
+  private PointField[] fields;
 
-  public boolean is_bigendian;
-  public int  point_step; 
-  public int  row_step; 
-  public String data; 
-  public boolean is_dense;
+  private boolean is_bigendian;
+  private int  point_step; 
+  private int  row_step; 
+  private String data; 
+  private boolean is_dense;
 };
 

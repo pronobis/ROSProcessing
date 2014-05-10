@@ -34,11 +34,30 @@
 
 package rosprocessing;
 
+import processing.core.*;
+
 public class Transform
 {
-  public Vector3 translation;
-  public Quaternion rotation;
+  private Vector3 translation;
+  private Quaternion rotation;
 
+  public Vector3 getTranslation() {
+    return translation;
+  }
+
+  public Quaternion getRotation() {
+    return rotation;
+  }
+  
+  // public Transform applyTo(PVector v) {
+
+  // }
+
+  
+  // public Transform combine(Transform t) {
+    
+  // }
+  
   public void print(String name) {
     translation.print(name+":translation");
     rotation.print(name+":rotation");

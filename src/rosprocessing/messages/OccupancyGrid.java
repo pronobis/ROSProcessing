@@ -40,16 +40,40 @@ import javax.xml.bind.DatatypeConverter;
 
 public class OccupancyGrid
 {
-  public Header header;
-  public MapMetaData info;
-  public byte [] data;
+  private Header header;
+  private MapMetaData info;
+  private byte [] data;
 
-  public PImage getPImage(PApplet parent) {
+  public Header getHeader() {
+    return header;
+  }
+
+  public MapMetaData getInfo() {
+    return info;
+  }
+
+  public byte [] getData() {
+    return data;
+  }
+
+  public Pose getOrigin() {
+    return info.getOrigin();
+  }
+
+  public float getWidthMeters() {
+    return info.getWidthMeters();
+  }
+
+  public float getHeightMeters() {
+    return info.getHeightMeters();
+  }
+  
+  public PImage toPImage(PApplet parent) {
 
     // Create a new PImage
-    PImage pImage = parent.createImage(info.width, info.height, PImage.RGB);
+    PImage pImage = parent.createImage(info.getWidth(), info.getHeight(), PImage.RGB);
 
-    int pixNum=info.width*info.height;
+    int pixNum=info.getWidth()*info.getHeight();
     for (int i=0; i<pixNum; ++i) {
       if (data[i]<0)
         pImage.pixels[i] = 150<<16 | 150<<8 | 255;

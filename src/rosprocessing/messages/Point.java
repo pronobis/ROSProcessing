@@ -36,10 +36,22 @@ package rosprocessing;
 
 public class Point
 {
-  public double x;
-  public double y;
-  public double z;
+  private double x;
+  private double y;
+  private double z;
 
+  public float getX() {
+    return (float) x;
+  }
+
+  public float getY() {
+    return (float) y;
+  }
+
+  public float getZ() {
+    return (float) z;
+  }
+  
   public Point(double x, double y, double z) {
     this.x=x;
     this.y=y;

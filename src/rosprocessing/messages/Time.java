@@ -36,8 +36,8 @@ package rosprocessing;
 
 public class Time implements Comparable<Time>
 {
-  public int secs;
-  public int nsecs;
+  private int secs;
+  private int nsecs;
 
   public Time() {
     this.secs=0;
@@ -47,6 +47,14 @@ public class Time implements Comparable<Time>
   public Time(int secs, int nsecs) {
     this.secs=secs;
     this.nsecs=nsecs;
+  }
+
+  public int getSecs() {
+    return secs;
+  }
+
+  public int getNSecs() {
+    return nsecs;
   }
   
   public int compareTo(Time t) {
@@ -86,5 +94,5 @@ public class Time implements Comparable<Time>
   public double toDouble() {
     return this.secs + (double)this.nsecs/1.0e9;
   }
-  
+ 
 }

@@ -36,9 +36,17 @@ package rosprocessing;
 
 public class Pose
 {
-  public Point position;
-  public Quaternion orientation;
+  private Point position;
+  private Quaternion orientation;
 
+  public Point getPosition() {
+    return position;
+  }
+
+  public Quaternion getOrientation() {
+    return orientation;
+  }
+  
   public void print(String name) {
     position.print(name+":position");
     orientation.print(name+":orientation");

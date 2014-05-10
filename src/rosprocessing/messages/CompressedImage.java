@@ -40,12 +40,12 @@ import javax.xml.bind.DatatypeConverter;
 
 public class CompressedImage
 {
-  public Header header;
-  public String format;
-  public String data;
+  private Header header;
+  private String format;
+  private String data;
   private transient byte [] byteData;
   
-  public byte [] getByteData() {
+  private byte [] getData() {
     if (byteData==null)
       byteData = DatatypeConverter.parseBase64Binary(data);
     return byteData; 

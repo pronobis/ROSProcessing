@@ -118,7 +118,7 @@ public class ROSProcessing {
   void logInfo(String msg) {
     this.parent.println("[ROSProcessing] " + msg);
   }
-  
+ 
   
   /** Connects to the server using websocket */
   public boolean connect() {
@@ -180,71 +180,7 @@ public class ROSProcessing {
     }
   }
 
- 
-  /** Subscribe to a topic. */
-  void subscribe(String topic, Object obj, String event) {
-    if (!this.isConnected)
-      return;
 
-    logInfo("Subscribing to "+topic);
-
-    // Get the method associated with the event
-    Method method=null;
-    Method[] methods = obj.getClass().getDeclaredMethods();
-    for (int i=0; i<methods.length; ++i) {
-      if (methods[i].getName().equals(event))
-        method = methods[i];
-    }
-    if (method==null) {
-      logError("No such event: "+event);
-      return;
-    }
-
-    // Save the topic and method in a map
-    this.events.put(topic, new EventInfo(obj, method));
-
-    // RosBridge command
-    this.webSocket.send("{\"op\": \"subscribe\"" +
-                    ", "+
-                    "\"topic\": \""+ topic +"\"" +
-                    "}");
-  }
-  
-
-  /** Subscribe to a topic. */
-  public void subscribe(String topic, String event) {
-    subscribe(topic, this.parent, event);
-  }
-
-
-  /** Starts a TF transform listener. */
-  public void listenTransforms() {
-    this.transformListener = new TransformListener(this);
-  }
-  
-
-  /** Get the most recent transform between two frames. */
-  public TransformStamped lookupTransform(String parent, String child) {
-    if (this.transformListener == null)
-      return null;
-    return this.transformListener.lookupTransform(parent,child);
-  }
-
-
-  /** Get the transform between two frames corresponding to the given time. */
-  public TransformStamped lookupTransform(String parent, String child, Time time) {
-    if (this.transformListener == null)
-      return null;
-    return this.transformListener.lookupTransform(parent,child,time);
-  }
-
-  
-  /** Prints a list of transforms received so far. */ 
-  public void printTransforms() {
-    this.transformListener.printTransforms();
-  }
-
-  
   /** Processes incoming data. */
   private void processIncoming(String data) {
     //logInfo(data);
@@ -329,5 +265,94 @@ public class ROSProcessing {
       ex.printStackTrace();
     }    
   } 
+
+ 
+  /** Subscribe to a topic. */
+  void subscribe(String topic, Object obj, String event) {
+    if (!this.isConnected)
+      return;
+
+    logInfo("Subscribing to "+topic);
+
+    // Get the method associated with the event
+    Method method=null;
+    Method[] methods = obj.getClass().getDeclaredMethods();
+    for (int i=0; i<methods.length; ++i) {
+      if (methods[i].getName().equals(event))
+        method = methods[i];
+    }
+    if (method==null) {
+      logError("No such event: "+event);
+      return;
+    }
+
+    // Save the topic and method in a map
+    this.events.put(topic, new EventInfo(obj, method));
+
+    // RosBridge command
+    this.webSocket.send("{\"op\": \"subscribe\"" +
+                    ", "+
+                    "\"topic\": \""+ topic +"\"" +
+                    "}");
+  }
+  
+
+  /** Subscribe to a topic. */
+  public void subscribe(String topic, String event) {
+    subscribe(topic, this.parent, event);
+  }
+
+
+  /** Starts a TF transform listener. */
+  public void listenTransforms(String tfTopic) {
+    this.transformListener = new TransformListener(this, tfTopic);
+  }
+  
+
+
+
+  /** Get the transform between two frames corresponding to the given time. */
+  public Transform lookupTransform(String parent, String child, Time time) {
+    if (this.transformListener == null)
+      return null;
+    TransformStamped ts = this.transformListener.lookupTransform(parent,child,time);
+    if (ts==null)
+      return null;
+    else
+      return ts.getTransform();
+  }
+
+  
+  /** Get the most recent transform between two frames. */
+  public Transform lookupTransform(String parent, String child) {
+    if (this.transformListener == null)
+      return null;
+    TransformStamped ts = this.transformListener.lookupTransform(parent,child);
+    if (ts==null)
+      return null;
+    else
+      return ts.getTransform();
+  }
+
+  /** Get the most recent transform between two frames. */
+  public TransformStamped lookupTransformStamped(String parent, String child) {
+    if (this.transformListener == null)
+      return null;
+    return this.transformListener.lookupTransform(parent,child);
+  }
+
+
+  /** Get the transform between two frames corresponding to the given time. */
+  public TransformStamped lookupTransformStamped(String parent, String child, Time time) {
+    if (this.transformListener == null)
+      return null;
+    return this.transformListener.lookupTransform(parent,child,time);
+  }
+  
+  
+  /** Prints a list of transforms received so far. */ 
+  public void printTransforms() {
+    this.transformListener.printTransforms();
+  }
   
 };

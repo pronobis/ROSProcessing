@@ -36,8 +36,25 @@ package rosprocessing;
 
 public class Odometry
 {
-  public Header header;
-  public String child_frame_id;
-  public PoseWithCovariance pose;
-  public TwistWithCovariance twist;
+  private Header header;
+  private String child_frame_id;
+  private PoseWithCovariance pose;
+  private TwistWithCovariance twist;
+
+  public Header getHeader() {
+    return header;
+  }
+
+  public String getChildFrameId() {
+    return child_frame_id;
+  }
+
+  public PoseWithCovariance getPoseWithCovariance() {
+    return pose;
+  }
+  
+  public TwistWithCovariance getTwistWithCovariance() {
+    return twist;
+  }
+  
 };

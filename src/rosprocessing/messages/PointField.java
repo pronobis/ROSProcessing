@@ -48,8 +48,8 @@ public class PointField
   public static transient byte FLOAT64 = 8;
 
   // Variables
-  public String name;
-  public int offset;
-  public byte datatype;
-  public int count;
+  private String name;
+  private int offset;
+  private byte datatype;
+  private int count;
 };

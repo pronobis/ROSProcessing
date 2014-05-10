@@ -40,24 +40,36 @@ import javax.xml.bind.DatatypeConverter;
 
 public class Image
 {
-  public Header header;
-  public int height;
-  public int width;
-  public String encoding;
-  public byte is_bigendian;
-  public int step;
-  public String data;
+  private Header header;
+  private int height;
+  private int width;
+  private String encoding;
+  private byte is_bigendian;
+  private int step;
+  private String data;
   private transient byte [] byteData;
+
+  public Header getHeader() {
+    return header;
+  }
+
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
   
-  public byte [] getByteData() {
+  public byte [] getData() {
     if (byteData==null)
       byteData = DatatypeConverter.parseBase64Binary(data);
     return byteData; 
   }
 
-  public PImage getPImage(PApplet parent) {
+  public PImage toPImage(PApplet parent) {
     // Decode the buffer
-    getByteData();
+    byte [] byteData = getData();
 
     // Create a new PImage
     PImage pImage = parent.createImage(width, height, PImage.RGB);

@@ -36,9 +36,33 @@ package rosprocessing;
 
 public class TransformStamped
 {
-  public Header header;
-  public String child_frame_id;
-  public Transform transform;
+  private Header header;
+  private String child_frame_id;
+  private Transform transform;
+
+  public Header getHeader() {
+    return header;
+  }
+
+  public Time getStamp() {
+    return header.getStamp();
+  }
+
+  public String getParentFrameId() {
+    return header.getFrameId();
+  }
+
+  public String getChildFrameId() {
+    String fid = child_frame_id;
+    if (fid.substring(0,1).equals("/"))
+      return fid.substring(1);
+    else 
+      return fid;
+  }
+
+  public Transform getTransform() {
+    return transform;
+  }
 
   public void print(String name) {
     header.print(name+":header");

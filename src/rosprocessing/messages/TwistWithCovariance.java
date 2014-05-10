@@ -36,6 +36,6 @@ package rosprocessing;
 
 public class TwistWithCovariance
 {
-  public Twist twist;
-  public double[] covariance;
+  private Twist twist;
+  private double[] covariance;
 }

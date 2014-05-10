@@ -36,10 +36,10 @@ package rosprocessing;
 
 public class Quaternion
 { 
-  public double x;
-  public double y;
-  public double z; 
-  public double w;
+  private double x;
+  private double y;
+  private double z; 
+  private double w;
 
   public void print(String name) {
     System.out.println(name+": ["+
@@ -49,9 +49,12 @@ public class Quaternion
                        Double.toString(w)+"]");   
   }
 
+  public Rot toRot() {
+    return new Rot((float)w, (float)x, (float)y, (float)z, true);
+  }
+  
   public float getYaw() {
-    Rot r = new Rot((float)w, (float)x, (float)y, (float)z, true);
-    return r.getAngles(RotOrder.XYZ)[2];
+    return toRot().getAngles(RotOrder.XYZ)[2];
   }
   
 }

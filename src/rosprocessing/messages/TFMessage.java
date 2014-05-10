@@ -36,5 +36,14 @@ package rosprocessing;
 
 public class TFMessage
 {
-  public TransformStamped[] transforms;
+  private TransformStamped[] transforms;
+
+  public TransformStamped[] getTransforms() {
+    return transforms;
+  }  
+
+  public TransformStamped getTransform(int i) {
+    return transforms[i];
+  }  
+
 }

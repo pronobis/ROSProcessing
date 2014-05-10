@@ -36,9 +36,9 @@ package rosprocessing;
 
 public class Point32
 {
-  public float x;
-  public float y;
-  public float z;
+  private float x;
+  private float y;
+  private float z;
 
   public void print(String name) {
     System.out.println(name+": ["+

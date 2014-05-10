@@ -36,6 +36,6 @@ package rosprocessing;
 
 public class PoseWithCovariance
 {
-  public Pose pose;
-  public double [] covariance;
+  private Pose pose;
+  private double [] covariance;
 }

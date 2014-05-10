@@ -37,7 +37,7 @@ package rosprocessing;
 
 public class PointCloud
 {
-  public Header header;
-  public Point32[] points;
-  public ChannelFloat32[] channels;
+  private Header header;
+  private Point32[] points;
+  private ChannelFloat32[] channels;
 };
