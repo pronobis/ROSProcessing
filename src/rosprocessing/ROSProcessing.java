@@ -268,7 +268,7 @@ public class ROSProcessing {
 
  
   /** Subscribe to a topic. */
-  void subscribe(String topic, Object obj, String event) {
+  public void subscribe(String topic, Object obj, String event) {
     if (!this.isConnected)
       return;
 
