@@ -6,6 +6,8 @@ public class Laser {
   Laser() {
     println("new laser!");
     rp.subscribe("/scan", this, "newScan");
+    
+    
   }
 
 
@@ -23,8 +25,7 @@ public class Laser {
 
     if (newScan!=null) {
 
-      println("new scan!");
-
+      //println("new scan!");
       Transform robotToLaser = getRobotToLaser();
       Transform mapToRobotScan = getMapToRobot(newScan.getTime());
       Transform mapToLaserScan = Transform.combine(mapToRobotScan, robotToLaser);
@@ -33,7 +34,7 @@ public class Laser {
         currentScan = newScan;
 
         x = mapToLaserScan.getTranslation().getX32();
-        y =mapToLaserScan.getTranslation().getY32(); 
+        y = mapToLaserScan.getTranslation().getY32(); 
         theta = mapToLaserScan.getRotation().getYaw32();
       }
     }
@@ -41,23 +42,30 @@ public class Laser {
 
   void render() {
     if (currentScan!=null) {
+      pushStyle();
       pushMatrix();
+      
       translate(x, y);
       rotate(theta); 
-      //fill(255, 0, 0);
-      strokeWeight(1);
-      stroke(255, 255, 255);
+
+      fill(0, 255, 255, 32);
+      strokeWeight(.01 );
+      stroke(0, 255, 255, 16);
+
       float angle = currentScan.getAngleMin();
-      beginShape();
+      beginShape(QUAD_STRIP);
       for (int i=0; i<currentScan.getRanges().length; ++i) {  
         //println(currentScan.getRanges()[i]);
         float xx = currentScan.getRanges()[i]*cos(angle);
         float yy = currentScan.getRanges()[i]*sin(angle);
         vertex(xx, yy, 0);
+        vertex(xx, yy, 2.5);
         angle+=currentScan.getAngleIncrement();
       }
       endShape();
+      
       popMatrix();
+      popStyle();
     } else {
       fill(255, 0, 0);
       textSize(55);
@@ -65,4 +73,3 @@ public class Laser {
     }
   }
 }
-

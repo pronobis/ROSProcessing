@@ -73,5 +73,3 @@ void drawScan(LaserScan scan, float x, float y, float theta) {
   }
   popMatrix(); 
 }
-
-

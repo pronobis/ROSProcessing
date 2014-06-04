@@ -3,7 +3,7 @@ void drawFrameRate() {
   fill(255);
   noStroke();
   text(frameRate+"", 100, 100);
-  println(frameRate);
+ // println(frameRate);
   popStyle();
 }
 

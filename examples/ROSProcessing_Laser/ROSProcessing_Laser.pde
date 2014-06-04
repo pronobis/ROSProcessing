@@ -7,22 +7,32 @@ Laser laser;
 int WIDTH_METERS = 50;
 
 void setup() {
-  size(displayWidth, displayHeight, P2D);
+  size(displayWidth, displayHeight, P3D);
   noCursor();
   colorMode(HSB);
 
   setupRos();
   laser = new Laser();
+
+  /*
+  laser = new Laser(){
+    public void render() {
+      println("hey" );
+    }
+  };
+  */
+
 }
 
 void draw() {
-  println("tick");
   background(0);
 
   pushMatrix();
   normalizeScene();
   laser.render();
   popMatrix();
+
+
 
   drawFrameRate();
 }

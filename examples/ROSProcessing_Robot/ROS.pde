@@ -14,8 +14,6 @@ void setupRos() {
     rp.connect();
     rp.listenTransforms("/tf_processing");
     
-    // laser.scan[]
-
     println("ROSProcessing connected");
   } 
   catch(Exception e) {
