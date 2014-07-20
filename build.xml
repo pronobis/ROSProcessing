@@ -1,8 +1,13 @@
 <project name="ROSProcessing" basedir="." default="main">
 
   <!-- CONFIGURATION -->
+  
   <!-- Set the path to the main Processing folder here -->
-  <property name="processing.dir" value="/opt/processing-2.1.2"/>
+  <!-- <property name="processing.dir" value="/opt/processing-2.1.2"/> -->
+
+  <!-- common path for processing core libraries in a OSX based system --> 
+  <property name="processing.dir" value="/Applications/Processing.app/contents/Java"/>
+
   <!-- /CONFIGURATION -->
 
   
