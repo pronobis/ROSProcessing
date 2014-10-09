@@ -303,13 +303,43 @@ public class ROSProcessing {
   }
 
 
+  /** advertise */
+  public void advertise(String topic, String type){
+
+    if (!this.isConnected)
+      return;
+
+    // RosBridge command
+    this.webSocket.send("{\"op\": \"advertise\"" +
+      ", "+
+      "\"topic\": \""+ topic +"\"" +
+      ", "+
+      "\"type\": \""+ type +"\"" +
+      "}");
+  }
+
+  /** Publish to a topic. */
+  public void publish(String topic, String msg) {
+    if (!this.isConnected)
+      return;
+
+    logInfo("Publishing to "+topic);
+
+    // RosBridge command
+    this.webSocket.send("{\"op\": \"publish\"" +
+      ", "+
+      "\"topic\": \""+ topic +"\"" +
+      ", "+
+      "\"msg\":" + msg +
+      "}");
+  }
+
+
   /** Starts a TF transform listener. */
   public void listenTransforms(String tfTopic) {
     this.transformListener = new TransformListener(this, tfTopic);
   }
   
-
-
 
   /** Get the transform between two frames corresponding to the given time. */
   public Transform lookupTransform(String parent, String child, Time time) {
